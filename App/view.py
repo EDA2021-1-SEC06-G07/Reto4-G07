@@ -36,9 +36,8 @@ operación solicitada
 
 def printMenu():
     print("Bienvenido")
-    print("1- Cargar información en el catálogo")
-    print("2- ")
-
+    print("1- Crear catálogo")
+    print("2- Cargar información en el cátalogo")
 catalog = None
 
 """
@@ -49,7 +48,9 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
-
+        analyzer= controller.init()
+        controller.loadConnection(analyzer,"connections.csv")
+    
     elif int(inputs[0]) == 2:
         pass
 

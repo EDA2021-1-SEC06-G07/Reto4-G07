@@ -27,15 +27,63 @@
 
 import config as cf
 from DISClib.ADT import list as lt
+from DISClib.ADT.graph import gr
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 assert cf
 
-"""
-Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
-los mismos.
-"""
+def newAnalyzer():
+    analyzer= {"connections": None,
+             "countries": None,
+             "landing_points": None
+    }
+        
+    analyzer["countries"] = mp.newMap(numelements=10000,
+                                          maptype="PROBING",
+                                          comparefunction= None)
+    analyzer["connections"] = gr.newGraph(datastructure='ADJ_LIST',
+                                              directed= True,
+                                              size= 10000,
+                                              comparefunction= None
+                                              )
+    return analyzer
+
+def addConnectionArc(analyzer, connection):
+    print(connection)
+    origen = connection["\ufefforigin"]
+    destino = connection["destination"]
+    longitud = connection["cable_length"]
+    addLanding_point(analyzer,origen)
+    addLanding_point(analyzer,destino)
+    addConnection(analyzer,origen,destino,longitud)
+    
+    
+
+def addLanding_point(analyzer,landing_point):
+    """
+    Adiciona un Landing point como vertice del grafo
+    """
+    try:
+        if not gr.containsVertex(analyzer['connections'], landing_point):
+            gr.insertVertex(analyzer['connections'], landing_point)
+        return analyzer
+    except Exception as exp:
+        error.reraise(exp, 'model:addstop')
+        
+
+def addConnection(analyzer, origin, destination, distance):
+    """
+    Adiciona un arco entre dos estaciones
+    """
+    edge = gr.getEdge(analyzer['connections'], origin, destination)
+    if edge is None:
+        gr.addEdge(analyzer['connections'], origin, destination, distance)
+    return analyzer
+
+
+    
+    
 
 # Construccion de modelos
 
