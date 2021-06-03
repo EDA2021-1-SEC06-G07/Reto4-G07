@@ -25,6 +25,7 @@
  """
 
 
+from DISClib.DataStructures.chaininghashtable import get
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT.graph import gr
@@ -39,18 +40,20 @@ def newAnalyzer():
              "landing_points": None
     }
         
-    analyzer["countries"] = mp.newMap(numelements=10000,
+    analyzer["countries"] = mp.newMap(numelements=1000,
                                           maptype="PROBING",
                                           comparefunction= None)
     analyzer["connections"] = gr.newGraph(datastructure='ADJ_LIST',
                                               directed= True,
                                               size= 10000,
-                                              comparefunction= None
-                                              )
+                                              comparefunction= None)
+    analyzer["landing_points"] = mp.newMap(numelements= 4000,
+                                           maptype= 'PROBING',
+                                           loadfactor= 0.4,
+                                           comparefunction= None)
     return analyzer
 
 def addConnectionArc(analyzer, connection):
-    print(connection)
     origen = connection["\ufefforigin"]
     destino = connection["destination"]
     longitud = connection["cable_length"]
@@ -71,28 +74,73 @@ def addLanding_point(analyzer,landing_point):
     except Exception as exp:
         error.reraise(exp, 'model:addstop')
         
+    
+
+def totalLanding_Points(analyzer):
+    "Retorna el número de landing points"
+    return  gr.numVertices(analyzer["connections"])
+
+def totalArcs(analyzer):
+    "Retorna elnúmero de Arcos"
+    return gr.numEdges(analyzer["connections"])
+   
+    
+
+# Construccion de modelos
+
+# Funciones para agregar informacion al catalogo
+def addLandingPointMap(analyzer,landing_point):
+    lp = analyzer["landing_points"]
+    code = landing_point["landing_point_id"]
+    info = mp.newMap(numelements= 4)
+    mp.put(info,'id',landing_point["id"])
+    mp.put(info,'name',landing_point["name"])
+    mp.put(info,'latitude',landing_point["latitude"])
+    mp.put(info,'longitude',landing_point["longitude"])
+    mp.put(lp,code,info)
 
 def addConnection(analyzer, origin, destination, distance):
     """
-    Adiciona un arco entre dos estaciones
+    Adiciona un arco entre dos landing points
     """
     edge = gr.getEdge(analyzer['connections'], origin, destination)
     if edge is None:
         gr.addEdge(analyzer['connections'], origin, destination, distance)
     return analyzer
 
-
+def addCountry(analyzer,country):
+    countries = analyzer["countries"]
+    name = country["CountryName"]
+    info = mp.newMap(numelements= 2)
+    mp.put(info,'Population',country["Population"])
+    mp.put(info,'Internet_Users',country["Internet users"])
+    mp.put(countries,name,info)
     
-    
-
-# Construccion de modelos
-
-# Funciones para agregar informacion al catalogo
 
 # Funciones para creacion de datos
 
 # Funciones de consulta
+def vertices(analyzer):
+    return gr.vertices(analyzer["connections"])
+   
+def vertInfo(analyzer,landing_point):
+    mapa_info = getValue(analyzer["landing_points"],landing_point)
+    return mapa_info
+      
+def getValue(map,key):
+    entry = mp.get(map,key)
+    return me.getValue(entry)
 
+def CountrySize(analyzer):
+    return mp.size(analyzer["countries"])
+
+def countries(analyzer):
+    return mp.keySet(analyzer["countries"])
+    
+def countryInfo(analyzer,country):
+    "Recibe un país y devuelve la información del país en este caso la información está como un mapa"
+    map_info = getValue(analyzer["countries"],country)
+    return map_info
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 # Funciones de ordenamiento

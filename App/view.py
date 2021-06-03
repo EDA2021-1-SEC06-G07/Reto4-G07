@@ -22,7 +22,7 @@
 
 import config as cf
 import sys
-import controller
+from App import controller
 from DISClib.ADT import list as lt
 assert cf
 
@@ -43,17 +43,58 @@ catalog = None
 """
 Menu principal
 """
+
+def optionTwo(analyzer):
+    print("\nCargando información  ....")
+    controller.loadConnection(analyzer)
+    controller.loadLanding_Points(analyzer)
+    controller.loadCountries(analyzer)
+    numvertex = controller.totalLanding_Points(analyzer)
+    numarc = controller.totalArcs(analyzer)
+    vert = controller.vertices(analyzer)
+    countries = controller.CountrySize(analyzer)
+    print('\n')
+    print("********INORMACIÓN CARGADA********")
+    print('\n')
+    print('Número de vertices en el grafo: ' + str(numvertex))
+    print('\n')
+    print('Número de arcos en el grafo: ' + str(numarc))
+    print('\n')
+    print('Número de paises cargados:', countries)
+    print('\n')
+    prim_el = lt.firstElement(vert)
+    mapinfo = controller.vertInfo(analyzer,prim_el)
+    name = controller.getValue(mapinfo,'name')
+    id = controller.getValue(mapinfo,'id')
+    latitude = controller.getValue(mapinfo,'latitude')
+    longitude = controller.getValue(mapinfo,'longitude')
+    print("Información del primer Landing Point cargado:")
+    print ("Nombre:",name)
+    print("Identificador:",id)
+    print("Latitude:", latitude)
+    print("Longitude:",longitude)
+    print('\n')
+    country = controller.countries(analyzer)
+    prim_country = lt.lastElement(country)
+    country_info = controller.countryInfo(analyzer,prim_country)
+    population = controller.getValue(country_info,'Population')
+    users = controller.getValue(country_info,'Internet_Users')
+    print("Información del último país cargado:")
+    print("Nombre:", prim_country)
+    print("Población:",population)
+    print("Usuarios de Internet:", users)
+    print('\n')
+    
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
-        print("Cargando información de los archivos ....")
-        analyzer= controller.init()
-        controller.loadConnection(analyzer,"connections.csv")
-    
+        print('\n')
+        print("Inicializando ....")
+        print('\n')
+        analyzer = controller.init()
     elif int(inputs[0]) == 2:
-        pass
-
+        optionTwo(analyzer)
     else:
         sys.exit(0)
 sys.exit(0)

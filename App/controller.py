@@ -21,7 +21,7 @@
  """
 
 import config as cf
-import model
+from App import model
 import csv
 
 
@@ -39,7 +39,7 @@ def init():
     return analyzer
 
 # Funciones para la carga de datos
-def loadConnection(analyzer, connectionfile):
+def loadConnection(analyzer):
     """
     Carga los datos de los archivos CSV en el modelo.
     Se crea un arco entre cada par de estaciones que
@@ -48,13 +48,50 @@ def loadConnection(analyzer, connectionfile):
     addRoutConnection crea conexiones entre diferentes rutas
     servidas en una misma estación.
     """
-    connectionfile = cf.data_dir + connectionfile
+    connectionfile = cf.data_dir + "connections.csv"
     input_file = csv.DictReader(open(connectionfile, encoding="utf-8"),
                                 delimiter=",")
     for connection in input_file:
         model.addConnectionArc(analyzer, connection)
     return analyzer
 
+def loadLanding_Points(analyzer):
+    file = cf.data_dir + 'landing_points.csv'
+    input_file = csv.DictReader(open(file, encoding='utf-8',errors='ignore'))
+    for landing_point in input_file:
+        model.addLandingPointMap(analyzer,landing_point) 
+    return analyzer
+
+def loadCountries(analyzer):
+    file = cf.data_dir + 'countries.csv'
+    input_file = csv.DictReader(open(file, encoding='utf-8',errors='ignore'))
+    for country in input_file:
+        model.addCountry(analyzer,country) 
+    return analyzer
+
+def totalLanding_Points(analyzer):
+    return model.totalLanding_Points(analyzer)
+
+def vertices(analyzer):
+    return model.vertices(analyzer)
+
+def countries(analyzer):
+    return model.countries(analyzer)
+
+def countryInfo(analyzer,country):
+    return model.countryInfo(analyzer,country)
+
+def totalArcs(analyzer):
+    return model.totalArcs(analyzer)
+
+def getValue(map,key):
+    return model.getValue(map,key)
+
+def vertInfo(analyzer,landing_point):
+    return model.vertInfo(analyzer,landing_point)
+
+def CountrySize(analyzer):
+    return model.CountrySize(analyzer)
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
