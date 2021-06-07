@@ -39,6 +39,20 @@ def init():
     return analyzer
 
 # Funciones para la carga de datos
+def loadLanding_Points(analyzer):
+    file = cf.data_dir + 'landing_points.csv'
+    input_file = csv.DictReader(open(file, encoding='utf-8',errors='ignore'))
+    for landing_point in input_file:
+        model.addLandingPointMap(analyzer,landing_point) 
+    return analyzer
+
+def loadCountries(analyzer):
+    file = cf.data_dir + 'countries.csv'
+    input_file = csv.DictReader(open(file, encoding='utf-8',errors='ignore'))
+    for country in input_file:
+        model.addCountry(analyzer,country) 
+    return analyzer
+
 def loadConnection(analyzer):
     """
     Carga los datos de los archivos CSV en el modelo.
@@ -53,20 +67,6 @@ def loadConnection(analyzer):
                                 delimiter=",")
     for connection in input_file:
         model.addConnectionArc(analyzer, connection)
-    return analyzer
-
-def loadLanding_Points(analyzer):
-    file = cf.data_dir + 'landing_points.csv'
-    input_file = csv.DictReader(open(file, encoding='utf-8',errors='ignore'))
-    for landing_point in input_file:
-        model.addLandingPointMap(analyzer,landing_point) 
-    return analyzer
-
-def loadCountries(analyzer):
-    file = cf.data_dir + 'countries.csv'
-    input_file = csv.DictReader(open(file, encoding='utf-8',errors='ignore'))
-    for country in input_file:
-        model.addCountry(analyzer,country) 
     return analyzer
 
 def totalLanding_Points(analyzer):
@@ -95,3 +95,8 @@ def CountrySize(analyzer):
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+def requerimiento1(graph,lndP1,lndP2,pMap):
+    return model.identificar_cluster(graph,lndP1,lndP2,pMap)
+
+def requerimiento3(graph,paisA,paisB,lpMap,cMap):
+    return model.ruta_menor_distancia(graph,paisA,paisB,lpMap,cMap)

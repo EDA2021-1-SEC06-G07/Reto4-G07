@@ -24,6 +24,8 @@ import config as cf
 import sys
 from App import controller
 from DISClib.ADT import list as lt
+import time
+import tracemalloc
 assert cf
 
 
@@ -43,11 +45,24 @@ catalog = None
 """
 Menu principal
 """
+def getTime():
+    return(float(time.perf_counter()*1000))
+
+def getMemory():
+    return tracemalloc.take_snapshot()
+
+def deltaMemory(start_memory,stop_memory):
+    memory_diff = stop_memory.compare_to(start_memory, "filename")
+    delta_memory = 0.0
+    for stat in memory_diff:
+        delta_memory = delta_memory + stat. size_diff
+    delta_memory = delta_memory/1024.0
+    return delta_memory
 
 def optionTwo(analyzer):
     print("\nCargando información  ....")
-    controller.loadConnection(analyzer)
     controller.loadLanding_Points(analyzer)
+    controller.loadConnection(analyzer)
     controller.loadCountries(analyzer)
     numvertex = controller.totalLanding_Points(analyzer)
     numarc = controller.totalArcs(analyzer)
@@ -84,7 +99,38 @@ def optionTwo(analyzer):
     print("Población:",population)
     print("Usuarios de Internet:", users)
     print('\n')
-    
+
+def optionThree(R1,lp1,lp2):
+    infClst,rta = R1
+    cant,pertenece = rta
+    cls1,cls2 = infClst
+    print('\n')
+    print('***** Req No. 1 resultados *****')
+    print()
+    print(f'Cantidad de clústeres dentro de la red: {cant}')
+    print()
+    if pertenece:
+        print(f'(+) Los landing Points {lp1} y {lp2} pertenecen al mismo clúster.')
+    else:
+        print(f'(-) Los landing Points {lp1} y {lp2} NO pertenecen al mismo clúster.')
+    print()
+    print(f'El landing Point {lndP1} pertenece al cluster {cls1}.')
+    print(f'El landing Point {lndP2} pertenece al cluster {cls2}.')
+    print('\n')
+
+def optionFive(rta,p1,p2):
+    print('\n')
+    print('***** Req No. 3 resultados *****')
+    print()
+
+    if rta != None:
+        ruta, costo = rta
+        print(f'[Ruta]: {ruta}')
+        print(f'[costo]: {costo}')
+    else:
+        print(f'No existe ruta mínima entre {paisA} y {paisB}')
+    print() 
+
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
@@ -94,7 +140,67 @@ while True:
         print('\n')
         analyzer = controller.init()
     elif int(inputs[0]) == 2:
+        tracemalloc.start()
+        delta_time = -1.0
+        delta_memory = -1.0
+    
+        start_time= getTime()
+        start_memory = getMemory()
+        
         optionTwo(analyzer)
+
+        stop_time = getTime()
+        stop_memory = getMemory()
+        tracemalloc.stop()
+        delta_time = stop_time - start_time
+        delta_memory = deltaMemory(start_memory, stop_memory)
+        print(delta_time, delta_memory)
+
+    elif int(inputs[0]) == 3:
+        lndP1 = str(input('Nombre Landing point 1: '))
+        lndP2 = str(input('Nombre Landing point 2: '))
+        tracemalloc.start()
+        delta_time = -1.0
+        delta_memory = -1.0
+    
+        start_time= getTime()
+        start_memory = getMemory()
+        
+        R1 = controller.requerimiento1(analyzer["connections"],lndP1,lndP2,analyzer['landing_points'])
+
+        stop_time = getTime()
+        stop_memory = getMemory()
+        tracemalloc.stop()
+        delta_time = stop_time - start_time
+        delta_memory = deltaMemory(start_memory, stop_memory)
+        print(delta_time, delta_memory)
+        optionThree(R1,lndP1,lndP2)
+    elif int(inputs[0]) == 4:
+        pass
+    elif int(inputs[0]) == 5:
+        paisA = str(input('Nombre del país origen: '))
+        paisB = str(input('Nombre del país destino: '))
+        tracemalloc.start()
+        delta_time = -1.0
+        delta_memory = -1.0
+    
+        start_time= getTime()
+        start_memory = getMemory()
+        
+        rta = controller.requerimiento3(analyzer['connections'],paisA,paisB,analyzer['landing_points'],analyzer['countries'])
+
+        stop_time = getTime()
+        stop_memory = getMemory()
+        tracemalloc.stop()
+        delta_time = stop_time - start_time
+        delta_memory = deltaMemory(start_memory, stop_memory)
+        print(delta_time, delta_memory)
+        optionFive(rta,paisA,paisB)
+
+        
     else:
         sys.exit(0)
 sys.exit(0)
+    
+
+    
