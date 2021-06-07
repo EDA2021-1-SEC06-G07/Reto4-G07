@@ -119,7 +119,7 @@ def optionThree(R1,lp1,lp2):
     print('\n')
     
 def optionFour(analyzer):
-    edgess = controller.edge(analyzer["connections"])
+    edgess = controller.edges(analyzer["connections"])
     nameycables, cablest = controller.req_2(edgess)
     print(nameycables)
     print("\n")

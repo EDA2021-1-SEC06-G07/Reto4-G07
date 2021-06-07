@@ -100,3 +100,12 @@ def requerimiento1(graph,lndP1,lndP2,pMap):
 
 def requerimiento3(graph,paisA,paisB,lpMap,cMap):
     return model.ruta_menor_distancia(graph,paisA,paisB,lpMap,cMap)
+
+def edges(analyzer):
+    return model.edges(analyzer)
+
+def req_2(list):
+    return model.req_2(list)
+   
+def req22(analyzer, list):
+    return model.sacar_lp(analyzer,list)

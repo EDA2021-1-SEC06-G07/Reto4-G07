@@ -63,6 +63,7 @@ def addConnectionArc(analyzer, connection):
     graph = analyzer['connections']
     origen = connection["\ufefforigin"]
     destino = connection["destination"]
+    cable_name = connection["cable_name"]
 
     lat1,lon1 = encontrar_lat_lon_lp(analyzer['landing_points'],origen)
     lat2,lon2 = encontrar_lat_lon_lp(analyzer['landing_points'],destino)
@@ -70,7 +71,7 @@ def addConnectionArc(analyzer, connection):
     
     graph1 = addLanding_point(graph,origen)
     graph2 = addLanding_point(graph1,destino)
-    addConnection(graph2,origen,destino,longitud)
+    addConnection(graph2,origen,destino,longitud, cable_name)
     
     
 
@@ -102,14 +103,14 @@ def totalArcs(analyzer):
 # Construccion de modelos
 
 # Funciones para agregar informacion al catalogo
-def addConnection(graph, origin, destination, distance):
+def addConnection(graph, origin, destination, distance,cable_name):
     """
     Adiciona un arco entre dos landing points
     """
     edge = gr.getEdge(graph, origin, destination)
     
     if edge is None:
-        gr.addEdge(graph, origin, destination, distance)
+        gr.addEdge(graph, origin, destination, distance, cable_name)
     return graph
 
 def addLandingPointMap(analyzer,landing_point):
@@ -265,7 +266,42 @@ def encontrar_lat_lon_lp(lpMap,code):
 
 
 
+"REQUERIMIENTO 2"
+
+def req_2(list):
+    vertex = ''
+    cable_name = ''
+    cables = 1
+    cablest= 0
+    list_lp_cables = mp.newMap(numelements= 100)
+    for arc in lt.iterator(list):
+        cable_org = arc["vertexA"]
+        cname_arc = arc["cable_name"]
+        if cable_org == vertex:
+            if cname_arc != cable_name:
+               cables += 1
+               cable_name = cname_arc
+               cablest += 1 
+            else:
+                pass
+        elif vertex == '':
+            vertex = cable_org
+            cable_name = cname_arc
+        elif cable_org != vertex:
+            mp.put(list_lp_cables,vertex,cables)
+            vertex = cable_org
+            cable_name = cname_arc  
+            cables = 1 
+    return list_lp_cables, cablest
+        
+def sacar_lp(analyzer,list):
+    landing_points = analyzer["landing_points"]
+    lp_list = lt.newList(datastructure='SINGLE_LINKED')
+    for key in lt.iterator(list):
+        get =mp.get(landing_points,key)
+        lt.addFirst(get)
+    return lp_list
 
 
-
-
+def edges(analyzer):
+    return gr.edges(analyzer)

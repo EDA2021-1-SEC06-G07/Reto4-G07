@@ -32,13 +32,14 @@ Este código está basado en las implementaciones propuestas en:
 """
 
 
-def newEdge(va, vb, weight=0):
+def newEdge(va, vb, weight, cable_name):
     """
     Crea un nuevo arco entrelos vertices va y vb
     """
     edge = {'vertexA': va,
             'vertexB': vb,
-            'weight': weight
+            'weight': weight,
+            'cable_name': cable_name
             }
     return edge
 

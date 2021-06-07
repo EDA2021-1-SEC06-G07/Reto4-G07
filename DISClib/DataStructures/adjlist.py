@@ -307,7 +307,7 @@ def containsVertex(graph, vertex):
         error.reraise(exp, 'ajlist:containsvertex')
 
 
-def addEdge(graph, vertexa, vertexb, weight=0):
+def addEdge(graph, vertexa, vertexb, weight, cable_name):
     """
     Agrega un arco entre los vertices vertexa ---- vertexb, con peso weight.
     Si el grafo es no dirigido se adiciona dos veces el mismo arco,
@@ -327,14 +327,14 @@ def addEdge(graph, vertexa, vertexb, weight=0):
     """
     try:
         # Se crea el arco
-        edge = e.newEdge(vertexa, vertexb, weight)
+        edge = e.newEdge(vertexa, vertexb, weight, cable_name)
         # Se obtienen las listas de adyacencias de cada vertice
         # Se anexa a cada lista el arco correspondiente
         entrya = map.get(graph['vertices'], vertexa)
         lt.addLast(entrya['value'], edge)
         if (not graph['directed']):
             entryb = map.get(graph['vertices'], vertexb)
-            edgeb = e.newEdge(vertexb, vertexa, weight)
+            edgeb = e.newEdge(vertexb, vertexa, weight, cable_name)
             lt.addLast(entryb['value'], edgeb)
         else:
             degree = map.get(graph['indegree'], vertexb)
