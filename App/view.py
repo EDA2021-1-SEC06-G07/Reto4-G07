@@ -117,6 +117,13 @@ def optionThree(R1,lp1,lp2):
     print(f'El landing Point {lndP1} pertenece al cluster {cls1}.')
     print(f'El landing Point {lndP2} pertenece al cluster {cls2}.')
     print('\n')
+    
+def optionFour(analyzer):
+    edgess = controller.edge(analyzer["connections"])
+    nameycables, cablest = controller.req_2(edgess)
+    print(nameycables)
+    print("\n")
+    print("El total de cables conectados a estos Landing Points son:",cablest)
 
 def optionFive(rta,p1,p2):
     print('\n')
@@ -176,7 +183,7 @@ while True:
         print(delta_time, delta_memory)
         optionThree(R1,lndP1,lndP2)
     elif int(inputs[0]) == 4:
-        pass
+        optionFour(analyzer)
     elif int(inputs[0]) == 5:
         paisA = str(input('Nombre del país origen: '))
         paisB = str(input('Nombre del país destino: '))
